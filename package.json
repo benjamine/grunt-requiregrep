@@ -1,0 +1,27 @@
+{
+  "name": "grunt-contrib-requiregrep",
+  "version": "0.0.1",
+  "description": "Grun task that greps AMD dependencies on source files",
+  "main": "grunt.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/benjamine/grunt-contrib-requiregrep.git"
+  },
+  "keywords": [
+    "grunt",
+    "grep",
+    "gruntplugin",
+    "AMD"
+    "require"
+  ],
+  "dependencies": {
+    "grunt-lib-contrib": "~0.3.0",
+    "shelljs": ">=0.1.2"
+  },
+  "devDependencies": {
+    "grunt": "~0.3.15",
+    "grunt-contrib-clean": "~0.3.0"
+  },
+  "author": "Benjamin Eidelman <beneidel@gmail.com> (http://twitter.com/beneidel)",
+  "license": "MIT"
+}
