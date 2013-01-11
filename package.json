@@ -1,7 +1,7 @@
 {
   "name": "grunt-contrib-requiregrep",
-  "version": "0.0.1",
-  "description": "Grun task that greps AMD dependencies on source files",
+  "version": "0.0.2",
+  "description": "Grunt task that creates AMD modules by searching for dependencies on source files",
   "main": "grunt.js",
   "repository": {
     "type": "git",
@@ -15,8 +15,6 @@
     "require"
   ],
   "dependencies": {
-    "grunt-lib-contrib": "~0.3.0",
-    "shelljs": ">=0.1.2"
   },
   "devDependencies": {
     "grunt": "~0.3.15",

@@ -1,5 +1,5 @@
 /*
- * grunt-contrib-depgrep
+ * grunt-contrib-requiregrep
  * http://gruntjs.com/
  *
  * Copyright (c) 2012 Benjamin Eidelman
@@ -9,53 +9,70 @@
 module.exports = function(grunt) {
     'use strict';
 
-    // TODO: ditch this when grunt v0.4 is released
-    grunt.util = grunt.util || grunt.utils;
+    grunt.registerMultiTask('requiregrep', 'Creates AMD module with dependencies extracted from source files.', function() {
 
-    grunt.registerTask('requiregrep', 'Extract AMD dependencies from source files.', function() {
+        var src = grunt.helper('requiregrep', this.data);
 
-        require('shelljs/global');
-        var fs = require('fs');
-        var path = require('path');
-
-        var _ = grunt.util._;
-        var kindOf = grunt.util.kindOf;
-        var helpers = require('grunt-lib-contrib').init(grunt);
-        var options = helpers.options(this, {logLevel: 0});
-
-        grunt.verbose.writeflags(options, 'Options');
-
-
-        var fileRegex = options.files || /.*html$/;
-        if (typeof fileRegex == 'string') {
-            fileRegex = new RegExp('^'+fileRegex.replace('*','.*')+'$');
+        if (this.errorCount) {
+            return false;
+        } else {
+            grunt.file.write(this.file.dest, src);
+            grunt.log.writeln("Saved " + this.data.dest);
+            return true;
         }
-        var files = find(options.folder || '.').filter(function(file) { return file.match(fileRegex); });
+    });
 
-        var requirePattern = options.requirePattern || /require\(\s*[\'\"]([^\'\"]*)[\'\"]/g;
+    // ==========================================================================
+    // HELPERS
+    // ==========================================================================
 
+    grunt.registerHelper('requiregrep', function(config) {
+
+        var options = config.options;
+
+        var fs = require('fs');
+        var files = grunt.file.expandFiles(config.files || '**/*.html');
+
+        var requirePattern = options.requirePattern || /require\(\s*[\'\"]([^\'\"]*)[\'\"]/gim;
         var dependencies = [];
+        var dependenciesByFile = {};
+
+
+
         files.forEach(function(file) {
-            var contents = fs.readFileSync(file, 'utf8'),
-            lines = contents.split(/\r*\n/);
-            lines.forEach(function(line) {
-                requirePattern.lastIndex = 0;
-                var match;
-                while(match = requirePattern.exec(line)) {
-                    var deps = match[1].replace(/[\s]+/g,'').split(',');
-                    deps.forEach(function(dep) {
-                        if (dependencies.indexOf(dep) < 0){
-                            dependencies.push(dep);
-                        }
-                    });
-                    //console.log(match[1].replace(/[\s]+/g,'').split(','), ' at '+file);
+            var contents = fs.readFileSync(file, 'utf8');
+            requirePattern.lastIndex = 0;
+            var match = requirePattern.exec(contents);
+            var registerDependency = function(dependencyName) {
+                var depByFile = (dependenciesByFile[file] = dependenciesByFile[file] || []);
+                if (depByFile.indexOf(dependencyName) < 0) {
+                    depByFile.push(dependencyName);
                 }
-            });
+                if (dependencies.indexOf(dependencyName) < 0) {
+                    dependencies.push(dependencyName);
+                }
+            };
+            while(match) {
+                var deps = match[1].replace(/[\s]+/g,'').split(',');
+                deps.forEach(registerDependency);
+                match = requirePattern.exec(contents);
+            }
         });
+
+        var prependText = null;
+        if (config.prepend) {
+            prependText = grunt.template.process(config.prepend, {
+                dependencies: dependencies,
+                dependenciesByFile: dependenciesByFile
+            });
+        }
 
         var moduleName = options.moduleName;
 
         var moduleDef = [];
+        if (prependText) {
+            moduleDef.push(prependText+'\n');
+        }
         moduleDef.push("define(");
         if (moduleName) {
             moduleDef.push("'", moduleName, "',");
@@ -65,16 +82,18 @@ module.exports = function(grunt) {
             moduleDef.push(dependencies.map(function(name){
                 return "'"+name+"'";
             }).join(','));
-            moduleDef.push("],");            
+            moduleDef.push("],");
         }
         moduleDef.push("function(){");
         if (options.onLoad) {
             moduleDef.push('\n',options.onLoad,'\n');
         }
         moduleDef.push("});");
-        var fileName = options.fileName || (moduleName + '.js');
-        fs.writeFileSync(fileName, moduleDef.join(''));
 
-        console.log('module '+(moduleName||'<anonymous>')+' saved at '+fileName+' with dependencies:', dependencies);
+        grunt.log.writeln('Created module '+(moduleName||'<anonymous>')+' with dependencies: ' + dependencies);
+
+        return moduleDef.join('');
+
     });
+
 };
