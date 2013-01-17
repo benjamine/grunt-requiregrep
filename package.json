@@ -1,6 +1,6 @@
 {
   "name": "grunt-contrib-requiregrep",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Grunt task that creates AMD modules by searching for dependencies on source files",
   "main": "grunt.js",
   "repository": {

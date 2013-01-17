@@ -47,6 +47,7 @@ Supports the following options:
   - requirePattern: regex to detect dependencies on source files, first capture group should be a comma-separated list of module names. default: ```/require\(\s*[\'\"]([^\'\"]*)[\'\"]/gi```
   - moduleName: output module name. default: null, ie. anonymous module
   - onLoad: code to include on module load (eg. ```console.log('all modules loaded!');```). default: ''
+  - forEachFile: function that will be called for each parsed file with these arguments: file, contents, registerDependency (use this function add a dependency)
 
 ## Example Usage
 ```javascript

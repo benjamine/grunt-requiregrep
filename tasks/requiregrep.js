@@ -37,8 +37,6 @@ module.exports = function(grunt) {
         var dependencies = [];
         var dependenciesByFile = {};
 
-
-
         files.forEach(function(file) {
             var contents = fs.readFileSync(file, 'utf8');
             requirePattern.lastIndex = 0;
@@ -56,6 +54,10 @@ module.exports = function(grunt) {
                 var deps = match[1].replace(/[\s]+/g,'').split(',');
                 deps.forEach(registerDependency);
                 match = requirePattern.exec(contents);
+            }
+
+            if (options.forEachFile) {
+                options.forEachFile(file, contents, registerDependency);
             }
         });
 
