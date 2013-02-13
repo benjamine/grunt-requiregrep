@@ -30,10 +30,10 @@ Install this grunt plugin next to your project's [grunt.js gruntfile][getting_st
 Then add this line to your project's gruntfile:
 
 ```javascript
-grunt.loadNpmTasks('grunt-contrib-requiregrep');
+grunt.loadNpmTasks('grunt-requiregrep');
 ```
 
-[npm_registry_page]: http://search.npmjs.org/#/grunt-contrib-requiregrep
+[npm_registry_page]: http://search.npmjs.org/#/grunt-requiregrep
 [grunt]: https://github.com/cowboy/grunt
 [getting_started]: https://github.com/cowboy/grunt/blob/master/docs/getting_started.md
 
@@ -57,7 +57,7 @@ module.exports = function (grunt) {
 
 	'use strict';
 
-	grunt.loadNpmTasks('grunt-contrib-requiregrep'); // load the task
+	grunt.loadNpmTasks('grunt-requiregrep'); // load the task
 
 	grunt.initConfig({
 		watch: {
