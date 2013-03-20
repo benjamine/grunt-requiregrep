@@ -1,7 +1,7 @@
-Grunt RequireDep Task
+Grunt Require-Grep Task
 ==================
 
-Searchs for dependencies required on your source code (eg. template files) and generates an AMD module from it.
+Searchs for AMD modules required on your source code (eg. template files) and generates an AMD module from it.
 
 Example:
 
@@ -13,21 +13,20 @@ Example:
 <!-- require("jquery, widgets, fx") -->
 ````
 
-Running ```grunt requiredep``` can generate:
+Running grunt-requiregrep can generate:
 
 ```` javascript
-// all.js
 define(['jquery', 'widgets', 'twitter', 'fx'], function()){
 	console.log('all modules loaded');
 });
 ````
 
-Now you can include this new module in your requirejs main config file. This allows you to use a AMD bundler like r.js (check [grunt-contrib-requirejs](https://github.com/gruntjs/grunt-contrib-requirejs)).
+Now you can include this new module in your requirejs main config file. This way if you use a bundler like r.js (check [grunt-contrib-requirejs](https://github.com/gruntjs/grunt-contrib-requirejs)) it will include all modules used on your source files automatically.
 
 ## Installation
-Install this grunt plugin next to your project's [grunt.js gruntfile][getting_started] with: `npm install grunt-contrib-requiregrep`
+Install this grunt plugin with: `npm install grunt-requiregrep`
 
-Then add this line to your project's gruntfile:
+Then add this line to your [grunt.js gruntfile][getting_started]:
 
 ```javascript
 grunt.loadNpmTasks('grunt-requiregrep');
@@ -41,13 +40,13 @@ grunt.loadNpmTasks('grunt-requiregrep');
 
 Supports the following options:
 
-- files: source files to grep for AMD dependencies (eg. *.html).
+- src/files: source files to grep for AMD dependencies (default: **/*.*html).
 - dest: output filename (eg ```all.js```)
 - options:
   - requirePattern: regex to detect dependencies on source files, first capture group should be a comma-separated list of module names. default: ```/require\(\s*[\'\"]([^\'\"]*)[\'\"]/gi```
   - moduleName: output module name. default: null, ie. anonymous module
-  - onLoad: code to include on module load (eg. ```console.log('all modules loaded!');```). default: ''
-  - forEachFile: function that will be called for each parsed file with these arguments: file, contents, registerDependency (use this function add a dependency)
+  - onLoad: code to include on module load (eg. ```console.log('all modules loaded!');```).
+  - forEachFile: function that will be called for each parsed file with these arguments: file, contents, registerDependency (use this function add a dependency programmatically)
 
 ## Example Usage
 ```javascript
@@ -67,11 +66,12 @@ module.exports = function (grunt) {
 
 		requiregrep: { // configure the task
 			all: {
-				files: [ // some example files
-					'home.html',
-					'view/**/*.html'
-				],
-				dest: 'scripts/all.js',
+				files: {
+					'scripts/all.js': [
+						'home.html',
+						'view/**/*.html'
+					]
+				},
 				options: {
 					onLoad: 'if (window.console){window.console('all modules loaded');}', // run after all dependencies are loaded
 				}

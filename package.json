@@ -1,6 +1,6 @@
 {
   "name": "grunt-requiregrep",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Grunt task that creates AMD modules by searching for dependencies on source files",
   "main": "grunt.js",
   "repository": {
@@ -15,10 +15,9 @@
     "require"
   ],
   "dependencies": {
+    "grunt": "~0.4"
   },
   "devDependencies": {
-    "grunt": "~0.3.15",
-    "grunt-contrib-clean": "~0.3.0"
   },
   "author": "Benjamin Eidelman <beneidel@gmail.com> (http://twitter.com/beneidel)",
   "license": "MIT"
